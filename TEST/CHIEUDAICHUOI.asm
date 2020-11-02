@@ -1,0 +1,47 @@
+MACRO HTCHUOI STRING
+    LEA DX,STRING
+    MOV AH,09H
+    INT 21H
+HTCHUOI ENDM
+
+.MODEL SMALL
+.DATA
+    MSG1 DB 'NhAP MOT CHUOI S BAT KY: $'
+    MSG2 DB 10,13,'CHIEU DAI CHUOI VUA NHAP: $'
+    S   DB 100,?,101 dup('$')
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS,AX
+    ;IN CHUOI MSG1
+    HTCHUOI MSG1
+    
+    ;NHAP CHUOI S
+    MOV AH,0AH       
+    LEA DX,S
+    INT 21h
+    ;IN CHUOI MSG2
+    HTCHUOI MSG2
+    ;TINH CHIEU DAI CHUOI
+    XOR AX,AX
+    MOV AL,S+1  ;CHUYEN CHIEU DAI CHUOI VAO AX
+    MOV CX,0    ;KHOI TAO BIEN DEM
+    MOV BX,10
+    LAPDEM1:
+        MOV DX,0
+        DIV BX
+        PUSH DX
+        INC CX
+        CMP AX,0
+        JNZ LAPDEM1
+    ;IN CHIEU DAI CHUOI
+    MOV AH,2
+    LAPDEM2:
+        POP DX
+        OR  DL,'0'        ;CHUYEN CHU SO -> SO
+        INT 21H
+        LOOP LAPDEM2   
+   
+    MOV AH,4CH
+    INT 21H
+MAIN ENDP
